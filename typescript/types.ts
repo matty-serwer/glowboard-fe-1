@@ -24,6 +24,7 @@ interface Soundboard {
   description: string;
   createdAt: string;
   user: User;
+  sounds: Sound[];
 }
 
 interface Category {

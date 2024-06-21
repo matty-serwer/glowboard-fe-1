@@ -38,7 +38,7 @@ const SoundBoard = () => {
     <DndProvider backend={HTML5Backend}>
       <div className={styles.soundBoard}>
         {sounds.map((sound, index) => (
-          <Sound key={index} name={sound.name} index={index} moveSound={moveSound} />
+          <Sound key={index} name={sound.name} index={index} />
         ))}
       </div>
     </DndProvider>

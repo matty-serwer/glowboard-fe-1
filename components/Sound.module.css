@@ -1,12 +1,55 @@
 .sound {
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 100px;
+    align-items: start;
     background-color: #1e2124;
     border: 1px solid #31dea4;
+    color: #31dea4;
+
+    /* Adjustments for small screens */
+    width: 60px;
+    height: 60px;
+    font-size: 12px;
+}
+
+.inputWrapper {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-bottom: solid 1px #31dea4;
+    width: 100%;
+    /*max-height: 32px;*/
+}
+
+.input {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    border: solid 10px green;
+    background-color: transparent;
+    color: #31dea4;
     font-size: 24px;
     font-weight: bold;
+}
+
+.text {
     color: #31dea4;
+}
+
+/* Medium screens: 600px to 800px */
+@media (min-width: 600px) and (max-width: 799px) {
+    .sound {
+        width: 100px;
+        height: 100px;
+        font-size: 16px;
+    }
+}
+
+/* Large screens: More than 800px */
+@media (min-width: 800px) {
+    .sound {
+        width: 150px;
+        height: 150px;
+        font-size: 20px;
+    }
 }
