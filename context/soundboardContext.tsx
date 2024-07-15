@@ -1,7 +1,8 @@
-import { createContext, useState } from 'react';
-import { User, Sound, Soundboard, Category, Effect } from '@/typescript/types';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { User, Soundboard, Sound, Category, Effect } from '../typescript/types';
 
-interface GlowboardContext {
+// Define the context type
+interface GlowboardContextType {
   user: User | null;
   soundboards: Soundboard[];
   sounds: Sound[];
@@ -11,21 +12,17 @@ interface GlowboardContext {
   addSound: (sound: Sound) => void;
   addCategory: (category: Category) => void;
   addEffect: (effect: Effect) => void;
+  setSounds: (sounds: Sound[]) => void;
 }
 
-const GlowboardContext = createContext<GlowboardContext>({
-  user: null,
-  soundboards: [],
-  sounds: [],
-  categories: [],
-  effects: [],
-  addSoundboard: () => {},
-  addSound: () => {},
-  addCategory: () => {},
-  addEffect: () => {},
-});
+// Create the context with a default value
+const GlowboardContext = createContext<GlowboardContextType | undefined>(undefined);
 
-const GlowboardProvider: React.FC = ({ children }: { children?: React.ReactNode }) => {
+interface GlowboardProviderProps {
+  children: ReactNode;
+}
+
+export const GlowboardProvider: React.FC<GlowboardProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [soundboards, setSoundboards] = useState<Soundboard[]>([]);
   const [sounds, setSounds] = useState<Sound[]>([]);
@@ -47,6 +44,7 @@ const GlowboardProvider: React.FC = ({ children }: { children?: React.ReactNode 
   const addEffect = (effect: Effect) => {
     setEffects((prevEffects) => [...prevEffects, effect]);
   };
+
   return (
     <GlowboardContext.Provider
       value={{
@@ -59,6 +57,7 @@ const GlowboardProvider: React.FC = ({ children }: { children?: React.ReactNode 
         addSound,
         addCategory,
         addEffect,
+        setSounds,
       }}
     >
       {children}
@@ -66,4 +65,11 @@ const GlowboardProvider: React.FC = ({ children }: { children?: React.ReactNode 
   );
 };
 
-export { GlowboardProvider, GlowboardContext };
+// Custom hook for using the Glowboard context
+export const useGlowboardContext = () => {
+  const context = useContext(GlowboardContext);
+  if (context === undefined) {
+    throw new Error('useGlowboardContext must be used within a GlowboardProvider');
+  }
+  return context;
+};

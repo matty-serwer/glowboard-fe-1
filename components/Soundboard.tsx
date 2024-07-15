@@ -1,48 +1,54 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react';
-import styles from './SoundBoard.module.css';
+import React, { useContext, useRef } from 'react';
+import { useDrop, DropTargetMonitor } from 'react-dnd';
+import { useGlowboardContext } from '../context/soundboardContext';
 import Sound from './Sound';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import styles from './Soundboard.module.css';
 
-const SoundBoard = () => {
-  const [sounds, setSounds] = useState([
-    { name: 'Sound 1' },
-    { name: 'Sound 2' },
-    { name: 'Sound 3' },
-    { name: 'Sound 4' },
-    { name: 'Sound 5' },
-    { name: 'Sound 6' },
-    { name: 'Sound 7' },
-    { name: 'Sound 8' },
-    { name: 'Sound 9' },
-    { name: 'Sound 10' },
-    { name: 'Sound 11' },
-    { name: 'Sound 12' },
-    { name: 'Sound 13' },
-    { name: 'Sound 14' },
-    { name: 'Sound 15' },
-    { name: 'Sound 16' },
-    // ...
-  ]);
+interface DragItem {
+  type: string;
+  index: number;
+}
 
-  const moveSound = (from: number, to: number) => {
+const Soundboard: React.FC = () => {
+  const { soundboards, addSoundboard } = useGlowboardContext();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [, drop] = useDrop({
+    accept: 'SOUND',
+    drop: (item: DragItem, monitor: DropTargetMonitor) => {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = sounds.length;
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+      const newSounds = [...sounds];
+      const [removed] = newSounds.splice(dragIndex, 1);
+      newSounds.splice(hoverIndex, 0, removed);
+      setSounds(newSounds);
+    },
+  });
+
+  drop(ref);
+
+  const handleDrop = (dragIndex: number, hoverIndex: number) => {
     const newSounds = [...sounds];
-    const sound = newSounds.splice(from, 1)[0];
-    newSounds.splice(to, 0, sound);
+    const [removed] = newSounds.splice(dragIndex, 1);
+    newSounds.splice(hoverIndex, 0, removed);
     setSounds(newSounds);
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className={styles.soundBoard}>
-        {sounds.map((sound, index) => (
-          <Sound key={index} name={sound.name} index={index} />
-        ))}
-      </div>
-    </DndProvider>
+    <div ref={ref} className={styles.soundboard}>
+      {sounds.map((sound, index) => (
+        <Sound key={sound.id} sound={sound} index={index} onDrop={handleDrop} />
+      ))}
+    </div>
   );
 };
 
-export default SoundBoard;
+export default Soundboard;
